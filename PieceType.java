@@ -15,7 +15,7 @@ public class PieceType {
 
     public PieceType(String pieceType) {
         this.pieceType = pieceType;
-        if(pieceType == "O") {
+        if(pieceType.equals("O")) {
             points = new Point[4];
             points[0] = new Point(-1,0);
             points[1] = new Point(0,0);
@@ -23,7 +23,7 @@ public class PieceType {
             points[3] = new Point(0,-1);
             this.maxOrientations = 0;
         }
-        else if(pieceType == "I") {
+        else if(pieceType.equals("I")) {
             points = new Point[4];
             points[0] = new Point(-2, 0);
             points[1] = new Point(-1, 0);
@@ -31,7 +31,7 @@ public class PieceType {
             points[3] = new Point(1,0);
             this.maxOrientations = 2;
         }
-        else if(pieceType == "S") {
+        else if(pieceType.equals("S")) {
             points = new Point[4];
             points[0] = new Point(0, 0);
             points[1] = new Point(1, 0);
@@ -39,7 +39,7 @@ public class PieceType {
             points[3] = new Point(0, -1);
             this.maxOrientations = 2;
         }
-        else if(pieceType == "Z") {
+        else if(pieceType.equals("Z")) {
             points = new Point[4];
             points[0] = new Point(-1, 0);
             points[1] = new Point(0, 0);
@@ -47,7 +47,7 @@ public class PieceType {
             points[3] = new Point(1, -1);
             this.maxOrientations = 2;
         }
-        else if(pieceType == "L") {
+        else if(pieceType.equals("L")) {
             points = new Point[4];
             points[0] = new Point(-1, 0);
             points[1] = new Point(0, 0);
@@ -55,7 +55,7 @@ public class PieceType {
             points[3] = new Point(-1, -1);
             this.maxOrientations = 4;
         }
-        else if(pieceType == "J") {
+        else if(pieceType.equals("J")) {
             points = new Point[4];
             points[0] = new Point(-1, 0);
             points[1] = new Point(0, 0);
@@ -63,7 +63,7 @@ public class PieceType {
             points[3] = new Point(1, -1);
             this.maxOrientations = 4;
         }
-        else if(pieceType == "T") {
+        else if(pieceType.equals("T")) {
             points = new Point[4];
             points[0] = new Point(-1, 0);
             points[1] = new Point(0, 0);
