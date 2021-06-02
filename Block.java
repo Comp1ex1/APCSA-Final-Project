@@ -4,9 +4,11 @@ public class Block {
     private Point[] points;
     private boolean initOrientation;
 
+
     public Block() {
       type = null;
     }
+
     public Block(PieceType type, boolean orientation) {
         this.type = type;
         points = type.getPoints();
@@ -79,6 +81,7 @@ public class Block {
             x = 1;
             y = -1;
         }
+
         else {
             x = -1;
             y = 1;
