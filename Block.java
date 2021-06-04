@@ -1,8 +1,13 @@
 public class Block {
-    
+
     private PieceType type;
     private Point[] points;
     private boolean initOrientation;
+
+
+    public Block() {
+      type = null;
+    }
 
     public Block(PieceType type, boolean orientation) {
         this.type = type;
@@ -75,7 +80,8 @@ public class Block {
         if (direction.equals("left")) {
             x = 1;
             y = -1;
-        } 
+        }
+
         else {
             x = -1;
             y = 1;
@@ -97,6 +103,6 @@ public class Block {
         return result;
     }
 
-    
+
 
 }
