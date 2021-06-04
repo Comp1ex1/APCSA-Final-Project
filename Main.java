@@ -2,6 +2,7 @@
 public class Main {
     public static void main(String[] args) {
 
+        /*
         PieceType pieceTest = new PieceType("L");
         PieceType pieceRandom = PieceType.getRandomPiece();
 
@@ -18,6 +19,9 @@ public class Main {
         System.out.println("initial points: " + blockTest.getPointsStr());
         blockTest.rotate();
         System.out.println("rotated points: " + blockTest.getPointsStr());
-
+        */
+        
+        Tetris.main(args);
     }
+
 }

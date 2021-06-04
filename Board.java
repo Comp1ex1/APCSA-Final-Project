@@ -48,6 +48,10 @@ public class Board {
     return board[x][y];
   }
 
+  public boolean isFilled(int x, int y){
+    return board[x][y] != null;
+  }
+
   public boolean checkFull(int l) {
     for(int i = 0; i < width; i++) {
         if (getBoardPosition(i, l).getType() == null) {
@@ -146,6 +150,11 @@ public class Board {
         currPiece = piece;
         resetSpawn();
     }
+
+    public Block getCurrentPiece() {
+        return currPiece;
+    }
+    
 
     public void resetSpawn() {
         spawn.setX(width/2);
