@@ -28,8 +28,7 @@ public class Game extends Canvas implements ActionListener, KeyListener, Runnabl
 	private Timer timer;
 
 
-    public Game()
-    {
+    public Game() {
         board = new Board();
  
         setBackground(Color.black);
@@ -45,8 +44,7 @@ public class Game extends Canvas implements ActionListener, KeyListener, Runnabl
 		
 	}
 
-	public void startGame()
-	{
+	public void startGame() {
 		if(pause)
 		{
 			return;
@@ -56,12 +54,9 @@ public class Game extends Canvas implements ActionListener, KeyListener, Runnabl
 		board.setCurrentPiece(Block.getRandomBlock());
 		timer.start();
 	}
-	
-	
-	public boolean gameEnd()
-	{
-		for(int i = 0; i < board.getWidth(); i++)
-		{
+		
+	public boolean gameEnd() {
+		for(int i = 0; i < board.getWidth(); i++) {
 			if(board.isFilled(i, 20))
 				gameOver = true;
 		}
@@ -71,33 +66,29 @@ public class Game extends Canvas implements ActionListener, KeyListener, Runnabl
 		return gameOver;
 	}
 
-	public Timer getTimer()
-	{
+	public Timer getTimer() {
 		return timer;
 	}
 
-	public void setTimer(Timer timer)
-	{
+	public void setTimer(Timer timer) {
 		this.timer = timer;
 	}
 
-	public void updateScore()
-	{
+	public void updateScore() {
 		score = board.getLinesFull() * 10;
 	}
 
-	public int getScore()
-	{
+	public int getScore() {
 		return score;
 	}
 
-    public void update(Graphics window)
-    {
-     
+    public void update(Graphics window) {
+		if(!gameOver) {
+			paint(window);
+		}
     }
 
-    public void paint(Graphics window)
-	{
+    public void paint(Graphics window) {
 
 		//more code
 
@@ -111,8 +102,7 @@ public class Game extends Canvas implements ActionListener, KeyListener, Runnabl
 		graphToBack.setColor(Color.BLACK);
 		graphToBack.fillRect(0,0,800,600);
 		
-		if(!gameOver)
-		{
+		if(!gameOver) {
 			if(keys[0] == true)
 			{
 				board.moveLeft();
@@ -137,13 +127,8 @@ public class Game extends Canvas implements ActionListener, KeyListener, Runnabl
 		}
 
 	}
-
-	public long getIterationDelay() {
-        return (long) (((11 - getLevel()) * 0.05) * 1000);
-    }
 	
-	public int getLevel()
-	{
+	public int getLevel() {
 		if ((board.getLinesFull() >= 1) && (board.getLinesFull() <= 90)) {
             return 1 + ((board.getLinesFull() - 1) / 10);
         } else if (board.getLinesFull() >= 91) {
@@ -154,8 +139,7 @@ public class Game extends Canvas implements ActionListener, KeyListener, Runnabl
 	}
 
 
-    public void keyPressed(KeyEvent e)
-	{
+    public void keyPressed(KeyEvent e) {
 		if (e.getKeyCode() == KeyEvent.VK_LEFT)
 		{
 			keys[0] = true;
@@ -176,8 +160,7 @@ public class Game extends Canvas implements ActionListener, KeyListener, Runnabl
 	}
 
 
-    public void keyReleased(KeyEvent e)
-	{
+    public void keyReleased(KeyEvent e) {
 		if (e.getKeyCode() == KeyEvent.VK_LEFT)
 		{
 			keys[0] = false;
@@ -197,13 +180,11 @@ public class Game extends Canvas implements ActionListener, KeyListener, Runnabl
 		repaint();
 	}
 
-	public void keyTyped(KeyEvent e)
-	{
+	public void keyTyped(KeyEvent e) {
       //no code needed here
 	}
 
-	public void actionPerformed(ActionEvent e)
-	{
+	public void actionPerformed(ActionEvent e) {
 		if(board.canMoveDown()){
 			board.moveDown();
 		}
@@ -214,8 +195,7 @@ public class Game extends Canvas implements ActionListener, KeyListener, Runnabl
 	}
 
 
-    public void run()
-    {
+    public void run() {
    	    try
    	    {
    		    while(true)
