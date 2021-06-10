@@ -118,7 +118,7 @@ public class PieceType extends Object {
     
     @Override
     public String toString() {
-        System.out.println(“Piece Type: ” + pieceType + “Max Orientations: ” + maxOrientations);
+        return "Piece Type: " + pieceType + "Max Orientations: " + maxOrientations;
     }
 }
 
