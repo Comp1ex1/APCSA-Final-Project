@@ -1,6 +1,6 @@
 import java.util.Random;
 
-public class PieceType {
+public class PieceType extends Object {
 
     private static final Random random = new Random();
     private final int maxOrientations;
@@ -114,6 +114,11 @@ public class PieceType {
 
     public String getPieceType() {
         return pieceType;
+    }
+    
+    @Override
+    public String toString() {
+        System.out.println(“Piece Type: ” + pieceType + “Max Orientations: ” + maxOrientations);
     }
 }
 
