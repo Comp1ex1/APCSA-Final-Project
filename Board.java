@@ -7,7 +7,6 @@ public class Board extends Matrix{
 
   private int linesFull = 0;
 
-
   public Board(){
     super(10,20);
     Block[][] newBoard = new Block[getWidth()][getHeight()];
@@ -67,7 +66,7 @@ public class Board extends Matrix{
         }
     }
 
-  public void clearRows() {
+   public void clearRows() {
 
     Block[][] newBoard = new Block[getWidth()][getHeight()];
     for (int i = 0; i < getWidth(); i++) {
@@ -94,7 +93,7 @@ public class Board extends Matrix{
 
      linesFull += full;
      board = baseBoard;
- }
+   }
 
 
    public boolean fitPiece(Point[] points, int moveX, int moveY) {
