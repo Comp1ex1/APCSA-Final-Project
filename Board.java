@@ -69,6 +69,14 @@ public class Board {
    }
 
 
+   public void rotate() {
+        Block rot = currPiece.rotate();
+        if (fitPiece(rot.getPoints(), 0, 0)) {
+
+            currPiece = rot;
+        }
+    }
+
   public void clearRows() {
 
     Block[][] newBoard = new Block[width][height];
@@ -154,7 +162,7 @@ public class Board {
     public Block getCurrentPiece() {
         return currPiece;
     }
-    
+
 
     public void resetSpawn() {
         spawn.setX(width/2);
@@ -184,5 +192,7 @@ public class Board {
             board[x][y] = new Block(currPiece.getType(), true);
         }
     }
+
+
 
 }

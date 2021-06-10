@@ -12,41 +12,41 @@ import java.awt.event.ActionListener;
 import javax.swing.Timer;
 
 
-public class Game extends Canvas implements ActionListener, KeyListener, Runnable{
-
+//public class Game extends Canvas implements ActionListener, KeyListener, Runnable{
+public class Game{
     private Board board;
-    private Block nextBLock;
-    
+    private Block nextBlock;
+
     private boolean run;
     private boolean pause;
     private boolean gameOver = false;
+    private boolean movingDown = false;
 
     private boolean[] keys;
     private BufferedImage back;
 
-	private int score;
-	private Timer timer;
+    private int amountFallen;
+  	private int score;
+  	//private Timer timer;
 
 
-    public Game()
-    {
+    public Game() {
         board = new Board();
- 
-        setBackground(Color.black);
-        keys = new boolean[4];
 
-        this.addKeyListener(this);
-        new Thread(this).start();
-        
-		setVisible(true);
+        //setBackground(Color.black);
+        //keys = new boolean[4];
 
-		timer = new Timer(400, this);
-		timer.start();
-		
+        //this.addKeyListener(this);
+        //new Thread(this).start();
+
+  		//setVisible(true);
+
+  		//timer = new Timer(400, this);
+  		//timer.start();
+
 	}
 
-	public void startGame()
-	{
+	public void startGame() {
 		if(pause)
 		{
 			return;
@@ -54,38 +54,69 @@ public class Game extends Canvas implements ActionListener, KeyListener, Runnabl
 		pause = false;
 		run = true;
 		board.setCurrentPiece(Block.getRandomBlock());
-		timer.start();
+		//timer.start();
+    nextBlock = Block.getRandomBlock();
 	}
-	
-	
+<<<<<<< Updated upstream
+		
+	public boolean gameEnd() {
+		for(int i = 0; i < board.getWidth(); i++) {
+=======
+
+  public boolean isRunning(){
+    return run;
+  }
+
 	public boolean gameEnd()
 	{
 		for(int i = 0; i < board.getWidth(); i++)
 		{
+>>>>>>> Stashed changes
 			if(board.isFilled(i, 20))
 				gameOver = true;
 		}
 		gameOver = false;
 
-		timer.stop();
+		//timer.stop();
 		return gameOver;
 	}
 
-	public Timer getTimer()
+<<<<<<< Updated upstream
+	public Timer getTimer() {
+=======
+	/*public Timer getTimer()
 	{
+>>>>>>> Stashed changes
 		return timer;
 	}
 
-	public void setTimer(Timer timer)
-	{
+	public void setTimer(Timer timer) {
 		this.timer = timer;
-	}
+	}*/
 
-	public void updateScore()
-	{
+	public void updateScore() {
 		score = board.getLinesFull() * 10;
 	}
 
+<<<<<<< Updated upstream
+	public int getScore() {
+		return score;
+	}
+
+    public void update(Graphics window) {
+		if(!gameOver) {
+			paint(window);
+		}
+    }
+
+    public void paint(Graphics window) {
+=======
+  public void down(){
+    movingDown = true;
+  }
+  public Block[][] getBlocks(){
+    return board.getBoardWithPiece();
+  }
 	public int getScore()
 	{
 		return score;
@@ -93,11 +124,12 @@ public class Game extends Canvas implements ActionListener, KeyListener, Runnabl
 
     public void update(Graphics window)
     {
-     
+
     }
 
-    public void paint(Graphics window)
+    /*public void paint(Graphics window)
 	{
+>>>>>>> Stashed changes
 
 		//more code
 
@@ -105,14 +137,19 @@ public class Game extends Canvas implements ActionListener, KeyListener, Runnabl
 
 		if(back==null)
 		   back = (BufferedImage)(createImage(getWidth(),getHeight()));
-		  
+
 		Graphics graphToBack = back.createGraphics();
 		graphToBack.drawString("Tetris", 25, 50 );
 		graphToBack.setColor(Color.BLACK);
 		graphToBack.fillRect(0,0,800,600);
+<<<<<<< Updated upstream
 		
+		if(!gameOver) {
+=======
+
 		if(!gameOver)
 		{
+>>>>>>> Stashed changes
 			if(keys[0] == true)
 			{
 				board.moveLeft();
@@ -126,9 +163,9 @@ public class Game extends Canvas implements ActionListener, KeyListener, Runnabl
         		board.getCurrentPiece().rotate();
       		}
       		if(keys[3] == true)
-      		{	
+      		{
 				board.moveDown();
-			}	
+			}
 		}
 
 		if (!gameOver){
@@ -136,14 +173,20 @@ public class Game extends Canvas implements ActionListener, KeyListener, Runnabl
 			graphToBack.drawString("SCORE: " +  score, 700, 30);
 		}
 
+<<<<<<< Updated upstream
 	}
+	
+	public int getLevel() {
+=======
+	}*/
 
 	public long getIterationDelay() {
         return (long) (((11 - getLevel()) * 0.05) * 1000);
     }
-	
+
 	public int getLevel()
 	{
+>>>>>>> Stashed changes
 		if ((board.getLinesFull() >= 1) && (board.getLinesFull() <= 90)) {
             return 1 + ((board.getLinesFull() - 1) / 10);
         } else if (board.getLinesFull() >= 91) {
@@ -153,9 +196,51 @@ public class Game extends Canvas implements ActionListener, KeyListener, Runnabl
         }
 	}
 
+  public void moveLeft() {
+        board.moveLeft();
+    }
 
-    public void keyPressed(KeyEvent e)
+<<<<<<< Updated upstream
+    public void keyPressed(KeyEvent e) {
+=======
+  public void moveRight() {
+      board.moveRight();
+  }
+  public void rotate() {
+      board.rotate();
+  }
+
+  public void moveDown() {
+        if (!board.canMoveDown()) {
+
+            if (amountFallen == 0) {
+                run = false;
+                gameOver = true;
+            } else {
+                movingDown = false;
+                board.setCurrentPiece(nextBlock);
+                nextBlock = Block.getRandomBlock();
+                score += getScore();
+                amountFallen = 0;
+            }
+        } else {
+            board.moveDown();
+            amountFallen++;
+        }
+    }
+
+  public boolean isMovingDown(){
+    return movingDown;
+  }
+  public int getLinesCleared(){
+    return board.getLinesFull();
+  }
+  public boolean isGameOver(){
+    return gameOver;
+  }
+  /*  public void keyPressed(KeyEvent e)
 	{
+>>>>>>> Stashed changes
 		if (e.getKeyCode() == KeyEvent.VK_LEFT)
 		{
 			keys[0] = true;
@@ -176,8 +261,7 @@ public class Game extends Canvas implements ActionListener, KeyListener, Runnabl
 	}
 
 
-    public void keyReleased(KeyEvent e)
-	{
+    public void keyReleased(KeyEvent e) {
 		if (e.getKeyCode() == KeyEvent.VK_LEFT)
 		{
 			keys[0] = false;
@@ -197,25 +281,32 @@ public class Game extends Canvas implements ActionListener, KeyListener, Runnabl
 		repaint();
 	}
 
-	public void keyTyped(KeyEvent e)
-	{
+	public void keyTyped(KeyEvent e) {
       //no code needed here
-	}
+	}*/
 
-	public void actionPerformed(ActionEvent e)
+<<<<<<< Updated upstream
+	public void actionPerformed(ActionEvent e) {
+=======
+	/*public void actionPerformed(ActionEvent e)
 	{
+>>>>>>> Stashed changes
 		if(board.canMoveDown()){
 			board.moveDown();
 		}
 		else{
 			board.clearRows();
-			board.setCurrentPiece(Block.getRandomBlock());	
+			board.setCurrentPiece(Block.getRandomBlock());
 		}
-	}
+	}*/
 
 
-    public void run()
+<<<<<<< Updated upstream
+    public void run() {
+=======
+    /*public void run()
     {
+>>>>>>> Stashed changes
    	    try
    	    {
    		    while(true)
@@ -227,5 +318,5 @@ public class Game extends Canvas implements ActionListener, KeyListener, Runnabl
         {
         }
   	}
-
+*/
 }
