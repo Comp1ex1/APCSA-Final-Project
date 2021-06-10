@@ -1,23 +1,21 @@
-public class Board {
+public class Board extends Matrix{
 
-  private int width = 10;
-  private int height = 20;
-
-  private Point spawn = new Point(width/2, height-1);
+  private Point spawn = new Point(getWidth()/2, getHeight()-1);
   private Block currPiece;
 
-  private Block[][] board = new Block[width][height];
+  private Block[][] board = new Block[getWidth()][getHeight()];
 
   private int linesFull = 0;
 
 
   public Board(){
-    Block[][] newBoard = new Block[width][height];
-    for (int i = 0; i < width; i++) {
+    super(10,20);
+    Block[][] newBoard = new Block[getWidth()][getHeight()];
+    for (int i = 0; i < getWidth(); i++) {
 
-        Block[] blocks = new Block[height];
+        Block[] blocks = new Block[getHeight()];
 
-        for(int n = 0; n < height; n++){
+        for(int n = 0; n < getHeight(); n++){
           blocks[n] = new Block();
         }
 
@@ -30,14 +28,6 @@ public class Board {
 
   public Block[][] getBoard(){
     return board;
-  }
-
-  public int getWidth(){
-    return width;
-  }
-
-  public int getHeight(){
-    return height;
   }
 
   public int getLinesFull(){
@@ -53,7 +43,7 @@ public class Board {
   }
 
   public boolean checkFull(int l) {
-    for(int i = 0; i < width; i++) {
+    for(int i = 0; i < getWidth(); i++) {
         if (getBoardPosition(i, l).getType() == null) {
             return false;
         }
@@ -63,7 +53,7 @@ public class Board {
 
 
   private void saveRow(Block[][] b, int n, int in) {
-       for (int i = 0; i < width; i++) {
+       for (int i = 0; i < getWidth(); i++) {
            b[i][in] = board[i][n];
        }
    }
@@ -79,12 +69,12 @@ public class Board {
 
   public void clearRows() {
 
-    Block[][] newBoard = new Block[width][height];
-    for (int i = 0; i < width; i++) {
+    Block[][] newBoard = new Block[getWidth()][getHeight()];
+    for (int i = 0; i < getWidth(); i++) {
 
-        Block[] blocks = new Block[height];
+        Block[] blocks = new Block[getHeight()];
 
-        for(int n = 0; n < height; n++){
+        for(int n = 0; n < getHeight(); n++){
           blocks[n] = new Block();
         }
 
@@ -94,7 +84,7 @@ public class Board {
      Block[][] baseBoard = newBoard;
 
      int full = 0;
-     for (int i = 0; i < height; i++) {
+     for (int i = 0; i < getHeight(); i++) {
          if (checkFull(i)) {
              full++;
          } else {
@@ -165,14 +155,14 @@ public class Board {
 
 
     public void resetSpawn() {
-        spawn.setX(width/2);
-        spawn.setY(height-1);
+        spawn.setX(getWidth()/2);
+        spawn.setY(getHeight()-1);
     }
 
     public Block[][] getBoardWithPiece() {
-        Block[][] b = new Block[width][height];
+        Block[][] b = new Block[getWidth()][getHeight()];
 
-        for (int i = 0; i < width; i++) {
+        for (int i = 0; i < getWidth(); i++) {
             System.arraycopy(board[i], 0, b[i], 0, board[0].length);
         }
 
