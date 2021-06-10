@@ -151,7 +151,7 @@ public class Board {
         spawn = new Point(spawn.getX() + mx, spawn.getY() + my);
     }
 
-    public void setCurrentPiece(Block piece) {
+    public void setCurrentBlock(Block piece) {
         if (currPiece != null) {
             addPiece();
         }

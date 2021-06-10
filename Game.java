@@ -17,33 +17,17 @@ public class Game{
     private Board board;
     private Block nextBlock;
 
-    private boolean run;
+    private boolean gameRunning;
     private boolean pause;
     private boolean gameOver = false;
     private boolean movingDown = false;
 
-    private boolean[] keys;
-    private BufferedImage back;
-
     private int amountFallen;
-  	private int score;
   	//private Timer timer;
 
 
     public Game() {
-        board = new Board();
-
-        //setBackground(Color.black);
-        //keys = new boolean[4];
-
-        //this.addKeyListener(this);
-        //new Thread(this).start();
-
-  		//setVisible(true);
-
-  		//timer = new Timer(400, this);
-  		//timer.start();
-
+        board = new Board();	
 	}
 
 	public void startGame() {
@@ -51,75 +35,36 @@ public class Game{
 		{
 			return;
 		}
-		pause = false;
-		run = true;
-		board.setCurrentPiece(Block.getRandomBlock());
-		//timer.start();
-    nextBlock = Block.getRandomBlock();
-	}
-<<<<<<< Updated upstream
-		
-	public boolean gameEnd() {
-		for(int i = 0; i < board.getWidth(); i++) {
-=======
 
-  public boolean isRunning(){
-    return run;
-  }
+		pause = false;
+		gameRunning = true;
+		board.setCurrentBlock(Block.getRandomBlock());
+    	nextBlock = Block.getRandomBlock();
+	}
+
+	public boolean isRunning(){
+		return gameRunning;
+	}
 
 	public boolean gameEnd()
 	{
 		for(int i = 0; i < board.getWidth(); i++)
 		{
->>>>>>> Stashed changes
 			if(board.isFilled(i, 20))
 				gameOver = true;
 		}
 		gameOver = false;
 
-		//timer.stop();
 		return gameOver;
 	}
 
-<<<<<<< Updated upstream
-	public Timer getTimer() {
-=======
-	/*public Timer getTimer()
-	{
->>>>>>> Stashed changes
-		return timer;
+
+	public void down(){
+		movingDown = true;
 	}
 
-	public void setTimer(Timer timer) {
-		this.timer = timer;
-	}*/
-
-	public void updateScore() {
-		score = board.getLinesFull() * 10;
-	}
-
-<<<<<<< Updated upstream
-	public int getScore() {
-		return score;
-	}
-
-    public void update(Graphics window) {
-		if(!gameOver) {
-			paint(window);
-		}
-    }
-
-    public void paint(Graphics window) {
-=======
-  public void down(){
-    movingDown = true;
-  }
-  public Block[][] getBlocks(){
-    return board.getBoardWithPiece();
-  }
-	public int getScore()
-	{
-		return score;
+	public Block[][] getBlocks(){
+		return board.getBoardWithPiece();
 	}
 
     public void update(Graphics window)
@@ -129,7 +74,6 @@ public class Game{
 
     /*public void paint(Graphics window)
 	{
->>>>>>> Stashed changes
 
 		//more code
 
@@ -142,14 +86,9 @@ public class Game{
 		graphToBack.drawString("Tetris", 25, 50 );
 		graphToBack.setColor(Color.BLACK);
 		graphToBack.fillRect(0,0,800,600);
-<<<<<<< Updated upstream
-		
-		if(!gameOver) {
-=======
 
 		if(!gameOver)
 		{
->>>>>>> Stashed changes
 			if(keys[0] == true)
 			{
 				board.moveLeft();
@@ -173,54 +112,39 @@ public class Game{
 			graphToBack.drawString("SCORE: " +  score, 700, 30);
 		}
 
-<<<<<<< Updated upstream
-	}
-	
-	public int getLevel() {
-=======
 	}*/
 
-	public long getIterationDelay() {
+	public long getIterations() {
         return (long) (((11 - getLevel()) * 0.05) * 1000);
     }
 
 	public int getLevel()
 	{
->>>>>>> Stashed changes
-		if ((board.getLinesFull() >= 1) && (board.getLinesFull() <= 90)) {
-            return 1 + ((board.getLinesFull() - 1) / 10);
-        } else if (board.getLinesFull() >= 91) {
-            return 10;
-        } else {
-            return 1;
-        }
+		return 1;
 	}
 
-  public void moveLeft() {
-        board.moveLeft();
-    }
+	public void moveLeft() {
+		board.moveLeft();
+	}
 
-<<<<<<< Updated upstream
-    public void keyPressed(KeyEvent e) {
-=======
-  public void moveRight() {
-      board.moveRight();
-  }
-  public void rotate() {
-      board.rotate();
-  }
+	public void moveRight() {
+		board.moveRight();
+	}
+	
+	public void rotate() {
+		board.rotate();
+	}
 
-  public void moveDown() {
+  	public void moveDown() {
         if (!board.canMoveDown()) {
-
             if (amountFallen == 0) {
-                run = false;
+                gameRunning = false;
                 gameOver = true;
-            } else {
+			} 
+			else {
                 movingDown = false;
-                board.setCurrentPiece(nextBlock);
+                board.setCurrentBlock(nextBlock);
                 nextBlock = Block.getRandomBlock();
-                score += getScore();
                 amountFallen = 0;
             }
         } else {
@@ -229,18 +153,21 @@ public class Game{
         }
     }
 
-  public boolean isMovingDown(){
-    return movingDown;
-  }
-  public int getLinesCleared(){
-    return board.getLinesFull();
-  }
-  public boolean isGameOver(){
-    return gameOver;
-  }
+	public boolean isMovingDown(){
+		return movingDown;
+	}
+
+	public int getLinesCleared(){
+		// acts as score so multiply by 10
+		return board.getLinesFull() * 10;
+	}
+
+	public boolean isGameOver(){
+		return gameOver;
+	}
+
   /*  public void keyPressed(KeyEvent e)
 	{
->>>>>>> Stashed changes
 		if (e.getKeyCode() == KeyEvent.VK_LEFT)
 		{
 			keys[0] = true;
@@ -285,12 +212,8 @@ public class Game{
       //no code needed here
 	}*/
 
-<<<<<<< Updated upstream
-	public void actionPerformed(ActionEvent e) {
-=======
 	/*public void actionPerformed(ActionEvent e)
 	{
->>>>>>> Stashed changes
 		if(board.canMoveDown()){
 			board.moveDown();
 		}
@@ -301,12 +224,8 @@ public class Game{
 	}*/
 
 
-<<<<<<< Updated upstream
-    public void run() {
-=======
     /*public void run()
     {
->>>>>>> Stashed changes
    	    try
    	    {
    		    while(true)

@@ -1,16 +1,15 @@
 import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.Point;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.image.BufferStrategy;
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.GridLayout;
+import java.awt.event.KeyListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyAdapter;
+
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -22,29 +21,32 @@ public class Tetris extends Canvas {
     private JPanel panel;
     private Board board;
     private Game tetris;
+    private boolean[] keys;
 
     private final BufferStrategy strategy;
 
-    private final int BOARD_CORNER_X = 300;
-    private final int BOARD_CORNER_Y = 50;
+    private int width = 300;
+    private int height = 50;
+    private int BLOCK_SIZE = 20;
 
-    private final KeyboardInput keyboard = new KeyboardInput();
+    private Keys keyboard = new Keys();
     private long lastIteration = System.currentTimeMillis();
-
-    private static final int PIECE_WIDTH = 20;
 
     public Tetris() {
       tetris = new Game();
       frame = new JFrame();
+      keys = new boolean[5];
+
       panel = (JPanel) frame.getContentPane();
       panel.setPreferredSize(new Dimension(800, 600));
       panel.setLayout(null);
       setBounds(0, 0, 800, 600);
       panel.add(this);
+
+      
       setIgnoreRepaint(true);
       board = new Board();
       frame.setTitle("Tetris");
-      //frame.add(panel);
       frame.pack();
       frame.setResizable(false);
       frame.setVisible(true);
@@ -53,7 +55,6 @@ public class Tetris extends Canvas {
                 System.exit(0);
             }
         });
-      //tetris.startGame();
 
       addKeyListener(keyboard);
       requestFocus();
@@ -63,54 +64,71 @@ public class Tetris extends Canvas {
 
     }
 
-    void gameLoop() {
-
+    public void gameLoop() {
         while (true) {
+            // if starting new game
+            //keys[4] == true
+            
             if(keyboard.newGame()){
+              System.out.println("game started / enter key pressed");
               tetris = new Game();
               tetris.startGame();
             }
+
+            // if program is running
             if (tetris.isRunning()) {
-                tetrisLoop();
+                if (tetris.isMovingDown()) {
+                    tetris.moveDown();
+                } else if (System.currentTimeMillis() - lastIteration >= tetris.getIterations()) {
+                    tetris.moveDown();
+                    lastIteration = System.currentTimeMillis();
+                }
+        
+                // keyboard inputs
+                //left key
+                // if(keys[0] == true)
+                // {
+                //     tetris.moveLeft();
+                // }
+                // // right key
+                // if(keys[1] == true)
+                // {
+                //     tetris.moveRight();
+                // }
+                // // rotating key
+                // if(keys[2] == true)
+                // {
+                //     tetris.rotate();
+                // }
+                // //drop 
+                // if(keys[3] == true)
+                // {
+                //     tetris.down();
+                // }
+        
+                if (keyboard.rotateKey()) {
+                    tetris.rotate();
+                } else if (keyboard.leftKey()) {
+                    tetris.moveLeft();
+                } else if (keyboard.rightKey()) {
+                    tetris.moveRight();
+                } else if (keyboard.drop()) {
+                    tetris.down();
+                }
             }
             try {
                 Thread.sleep(20);
             } catch (Exception e) { }
-            draw();
+            paint();
         }
     }
 
-    void tetrisLoop() {
-
-      if (tetris.isMovingDown()) {
-          tetris.moveDown();
-      } else if (System.currentTimeMillis() - lastIteration >= tetris.getIterationDelay()) {
-          tetris.moveDown();
-          lastIteration = System.currentTimeMillis();
-      }
-      if (keyboard.rotate()) {
-          tetris.rotate();
-      } else if (keyboard.left()) {
-          tetris.moveLeft();
-      } else if (keyboard.right()) {
-          tetris.moveRight();
-      } else if (keyboard.down()) {
-          tetris.down();
-      }
-    }
-
-    public void draw() {
+    public void paint() {
         Graphics2D g = getGameGraphics();
-        drawEmptyBoard(g);
-        drawHelpBox(g);
-        drawPiecePreviewBox(g);
+        drawFullBoard(g);
 
         if (tetris.isRunning()) {
             drawBlocks(g);
-
-            /*if (game.isPaused()) {
-                drawGamePaused(g);
-            }*/
         }
 
         if (tetris.isGameOver()) {
@@ -118,8 +136,11 @@ public class Tetris extends Canvas {
             drawGameOver(g);
         }
 
-        drawStatus(g);
-        drawPlayTetris(g);
+        // draws the player's score
+        g.setColor(Color.BLACK);
+        g.drawString(getPlayerScore(), 10, 40);
+
+        drawInstructions(g);
 
         g.dispose();
         strategy.show();
@@ -129,120 +150,132 @@ public class Tetris extends Canvas {
         return (Graphics2D) strategy.getDrawGraphics();
     }
 
+
+    private void drawFullBoard(Graphics2D g) {
+        g.setColor(Color.WHITE);
+        g.fillRect(0, 0, 800, 600);
+        g.setColor(Color.BLACK);
+        g.drawRect(width - 1, height - 1, 10 * BLOCK_SIZE + 2, 20 * BLOCK_SIZE + 2);
+    }
+
+    private void drawGameOver(Graphics2D g) {
+        g.setColor(Color.BLACK);
+        g.drawString("GAME OVER", 350, 550);
+    }
+
+    private void drawInstructions(Graphics2D g) {
+        g.setColor(Color.BLACK);
+        g.drawString("Press enter to begin!", 350, 500);
+        g.drawString("Use up arrow to rotate, and left and right to move the blocks!", 200, 550);
+    }
+
+    private String getPlayerScore() {
+        return String.format("Score: %1s", tetris.getLinesCleared());
+    }
+
+    
     private void drawBlocks(Graphics2D g) {
         Block[][] blocks = tetris.getBlocks();
         for (int i = 0; i < 10; i++) {
             for (int j = 0; j < 20; j++) {
-                drawBlock(g, BOARD_CORNER_X + i * 20, BOARD_CORNER_Y + (19 - j) * 20, getBlockColor(blocks[i][j]));
+                g.setColor(getBlockColor(blocks[i][j]));
+                g.fillRect(width + i * 20, height + (19 - j) * 20, BLOCK_SIZE, BLOCK_SIZE);
+                g.drawRect(width + i * 20, height + (19 - j) * 20, BLOCK_SIZE, BLOCK_SIZE);
             }
         }
     }
 
-    private void drawEmptyBoard(Graphics2D g) {
-        g.setColor(Color.BLACK);
-        g.fillRect(0, 0, 800, 600);
-        g.setColor(Color.GRAY);
-        g.drawRect(BOARD_CORNER_X - 1, BOARD_CORNER_Y - 1, 10 * PIECE_WIDTH + 2, 20 * PIECE_WIDTH + 2);
-    }
-
-    private void drawStatus(Graphics2D g) {
-        g.setFont(new Font("Dialog", Font.PLAIN, 16));
-        g.setColor(Color.BLUE);
-        g.drawString(getLevel(), 10, 20);
-        g.drawString(getLines(), 10, 40);
-        g.drawString(getScore(), 20, 80);
-    }
-
-    private void drawGameOver(Graphics2D g) {
-        Font font = new Font("Dialog", Font.PLAIN, 16);
-        g.setFont(font);
-        g.setColor(Color.BLUE);
-        g.drawString("GAME OVER", 350, 550);
-    }
-
-    /*private void drawGamePaused(Graphics2D g) {
-        Font font = new Font("Dialog", Font.PLAIN, 16);
-        g.setFont(font);
-        g.setColor(Color.YELLOW);
-        g.drawString("GAME PAUSED", 350, 550);
-    }*/
 
 
-    private void drawPlayTetris(Graphics2D g) {
-        Font font = new Font("Dialog", Font.PLAIN, 16);
-        g.setFont(font);
-        g.setColor(Color.BLUE);
-        g.drawString("Play TETRIS !", 350, 500);
-    }
-
-    private String getLevel() {
-        return String.format("Your level: %1s", tetris.getLevel());
-    }
-
-    private String getLines() {
-        return String.format("Full lines: %1s", tetris.getLinesCleared());
-    }
-
-    private String getScore() {
-        return String.format("Score     %1s", tetris.getScore());
-    }
-
-    private void drawPiecePreviewBox(Graphics2D g) {
-        g.setFont(new Font("Dialog", Font.PLAIN, 16));
-        g.setColor(Color.BLUE);
-        g.drawString("Next:", 50, 420);
-    }
-
-    private void drawHelpBox(Graphics2D g) {
-        g.setFont(new Font("Dialog", Font.PLAIN, 16));
-        g.setColor(Color.BLUE);
-        g.drawString("H E L P", 50, 140);
-        //g.drawString("F1: Pause Game", 10, 160);
-        g.drawString("Enter: New Game", 10, 180);
-        g.drawString("UP: Rotate", 10, 200);
-        g.drawString("ARROWS: Move left/right", 10, 220);
-        g.drawString("SPACE: Down", 10, 240);
-    }
-
-
-
-    private Color getBlockColor(Block block) {
-        if (block.getType() == null) {
+    private Color getBlockColor(Block b) {
+        if (b.getType() == null) {
             return Color.BLACK;
         }
-        return getPieceColor(block.getType());
-    }
 
-    private Color getPieceColor(PieceType pieceType) {
-        if(pieceType.getPieceType().equals("O")){
-          return Color.RED;
-        } else if(pieceType.getPieceType().equals("I")) {
-          return Color.GRAY;
+        String type = b.getType().getPieceType();
+
+        if(type.equals("O")){
+            return Color.RED;
+        } 
+        else if(type.equals("I")) {
+            return Color.GRAY;
         }
-        else if(pieceType.getPieceType().equals("S")) {
+        else if(type.equals("S")) {
             return Color.CYAN;
         }
-        else if(pieceType.getPieceType().equals("Z")) {
+        else if(type.equals("Z")) {
             return Color.BLUE;
         }
-        else if(pieceType.getPieceType().equals("L")) {
+        else if(type.equals("L")) {
             return Color.GREEN;
         }
-        else if(pieceType.getPieceType().equals("T")) {
+        else if(type.equals("T")) {
             return Color.ORANGE;
-        } else {
-          return Color.MAGENTA;
         }
 
+        return Color.MAGENTA;
     }
 
-    private void drawBlock(Graphics g, int x, int y, Color color) {
-        g.setColor(color);
-        g.fillRect(x, y, PIECE_WIDTH, PIECE_WIDTH);
-        g.drawRect(x, y, PIECE_WIDTH, PIECE_WIDTH);
+    /*
+    public void keyPressed(KeyEvent e)
+	{
+		if (e.getKeyCode() == KeyEvent.VK_LEFT)
+		{
+			keys[0] = true;
+		}
+		if (e.getKeyCode() == KeyEvent.VK_RIGHT)
+		{
+			keys[1] = true;
+		}
+		if (e.getKeyCode() == KeyEvent.VK_UP)
+		{
+			keys[2] = true;
+		}
+        //start new game
+        if (e.getKeyCode() == KeyEvent.VK_SPACE)
+		{
+			keys[3] = true;
+        }
+        if (e.getKeyCode() == KeyEvent.VK_ENTER)
+		{
+			keys[4] = true;
+        }
+		repaint();
+	}
+
+
+    public void keyReleased(KeyEvent e) {
+		if (e.getKeyCode() == KeyEvent.VK_LEFT)
+		{
+			keys[0] = false;
+		}
+		if (e.getKeyCode() == KeyEvent.VK_RIGHT)
+		{
+			keys[1] = false;
+		}
+		if (e.getKeyCode() == KeyEvent.VK_UP)
+		{
+			keys[2] = false;
+		}
+        if (e.getKeyCode() == KeyEvent.VK_SPACE)
+		{
+			keys[3] = false;
+        }
+        if (e.getKeyCode() == KeyEvent.VK_ENTER)
+		{
+			keys[4] = false;
+		}
+		repaint();
+	}
+
+	public void keyTyped(KeyEvent e) {
+      //no code needed here
     }
+    */
+
 
     public static void main(String[] args) {
         new Tetris().gameLoop();
     }
+
 }
