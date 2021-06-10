@@ -95,7 +95,7 @@ public class Block {
     }
 
     // returns the array of Points as a string for debugging purposes
-    public String getPointsStr() {
+    public String toString() {
         String result = "";
         for (Point p : getPoints()) {
             result = result + "x: " + p.getX() + ", y: " + p.getY() + ";\t";

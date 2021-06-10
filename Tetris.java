@@ -160,7 +160,7 @@ public class Tetris extends Canvas {
 
     private void drawGameOver(Graphics2D g) {
         g.setColor(Color.BLACK);
-        g.drawString("GAME OVER", 350, 550);
+        g.drawString("GAME OVER", 350, 600);
     }
 
     private void drawInstructions(Graphics2D g) {
