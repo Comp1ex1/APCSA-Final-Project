@@ -46,6 +46,10 @@ public class Game{
 		return gameRunning;
 	}
 
+	public void setGameRunning(boolean result) {
+		gameRunning = result;
+	}
+
 	public boolean gameEnd()
 	{
 		for(int i = 0; i < board.getWidth(); i++)

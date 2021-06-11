@@ -9,6 +9,7 @@ import java.awt.image.BufferStrategy;
 import java.awt.event.KeyListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyAdapter;
+import java.awt.image.BufferedImage;
 
 
 import javax.swing.JFrame;
@@ -16,14 +17,12 @@ import javax.swing.JPanel;
 import java.awt.Component;
 
 
-public class Tetris extends Canvas {
-    private JFrame frame;
-    private JPanel panel;
+public class Tetris extends Canvas implements Runnable, KeyListener{
     private Board board;
     private Game tetris;
-    private boolean[] keys;
 
-    private final BufferStrategy strategy;
+    private BufferedImage back;
+    private boolean[] keys;
 
     private int width = 300;
     private int height = 50;
@@ -34,97 +33,86 @@ public class Tetris extends Canvas {
 
     public Tetris() {
       tetris = new Game();
-      frame = new JFrame();
+      //frame = new JFrame();
       keys = new boolean[5];
 
-      panel = (JPanel) frame.getContentPane();
-      panel.setPreferredSize(new Dimension(800, 600));
-      panel.setLayout(null);
-      setBounds(0, 0, 800, 600);
-      panel.add(this);
-
-      
-      setIgnoreRepaint(true);
       board = new Board();
-      frame.setTitle("Tetris");
-      frame.pack();
-      frame.setResizable(false);
-      frame.setVisible(true);
-      frame.addWindowListener(new WindowAdapter() {
-            public void windowClosing(WindowEvent e) {
-                System.exit(0);
-            }
-        });
-
+     
+      new Thread(this).start();
       addKeyListener(keyboard);
-      requestFocus();
 
-      createBufferStrategy(2);
-      strategy = getBufferStrategy();
-
+      //this.addKeyListener(this);
+      setVisible(true);
     }
 
-    public void gameLoop() {
-        while (true) {
-            // if starting new game
-            //keys[4] == true
-            
-            if(keyboard.newGame()){
-              System.out.println("game started / enter key pressed");
-              tetris = new Game();
-              tetris.startGame();
-            }
-
-            // if program is running
-            if (tetris.isRunning()) {
-                if (tetris.isMovingDown()) {
-                    tetris.moveDown();
-                } else if (System.currentTimeMillis() - lastIteration >= tetris.getIterations()) {
-                    tetris.moveDown();
-                    lastIteration = System.currentTimeMillis();
-                }
-        
-                // keyboard inputs
-                //left key
-                // if(keys[0] == true)
-                // {
-                //     tetris.moveLeft();
-                // }
-                // // right key
-                // if(keys[1] == true)
-                // {
-                //     tetris.moveRight();
-                // }
-                // // rotating key
-                // if(keys[2] == true)
-                // {
-                //     tetris.rotate();
-                // }
-                // //drop 
-                // if(keys[3] == true)
-                // {
-                //     tetris.down();
-                // }
-        
-                if (keyboard.rotateKey()) {
-                    tetris.rotate();
-                } else if (keyboard.leftKey()) {
-                    tetris.moveLeft();
-                } else if (keyboard.rightKey()) {
-                    tetris.moveRight();
-                } else if (keyboard.drop()) {
-                    tetris.down();
-                }
-            }
-            try {
-                Thread.sleep(20);
-            } catch (Exception e) { }
-            paint();
+    public void update(Graphics g) {
+        // if starting new game
+        //if(keys[4] == true){
+        if(keyboard.newGame()){
+            System.out.println("game started / enter key pressed");
+            tetris = new Game();
+            tetris.startGame();
         }
+
+        // if program is running
+        if (tetris.isRunning()) {
+            if (tetris.isMovingDown()) {
+                tetris.moveDown();
+            } else if (System.currentTimeMillis() - lastIteration >= tetris.getIterations()) {
+                tetris.moveDown();
+                lastIteration = System.currentTimeMillis();
+            }
+    
+            // keyboard inputs
+            //left key
+            // if(keys[0] == true)
+            // {
+            //     tetris.moveLeft();
+            //     keys[0] = false;
+            // }
+            // // right key
+            // if(keys[1] == true)
+            // {
+            //     tetris.moveRight();
+            //     keys[1] = false;
+            // }
+            // // rotating key
+            // if(keys[2] == true)
+            // {
+            //     tetris.rotate();
+            //     keys[2] = false;
+            // }
+            // //drop 
+            // if(keys[3] == true)
+            // {
+            //     tetris.down();
+            //     keys[3] = false;
+            // }
+    
+            if (keyboard.rotateKey()) {
+                tetris.rotate();
+            } else if (keyboard.leftKey()) {
+                tetris.moveLeft();
+            } else if (keyboard.rightKey()) {
+                tetris.moveRight();
+            } else if (keyboard.drop()) {
+                tetris.down();
+            }
+        }
+        try {
+            Thread.sleep(20);
+        } catch (Exception e) { }
+        paint(g);
+        
     }
 
-    public void paint() {
-        Graphics2D g = getGameGraphics();
+    public void paint(Graphics window) {
+        Graphics2D twoDGraph = (Graphics2D)window;
+        if(back == null) {
+            back = (BufferedImage)(createImage(getWidth(),getHeight()));
+        }
+        Graphics g = back.createGraphics();
+
         drawFullBoard(g);
 
         if (tetris.isRunning()) {
@@ -142,39 +130,33 @@ public class Tetris extends Canvas {
 
         drawInstructions(g);
 
-        g.dispose();
-        strategy.show();
+        //g.dispose();
+        //strategy.show();
+
+        twoDGraph.drawImage(back, null, 0, 0);
+
     }
 
-    private Graphics2D getGameGraphics() {
-        return (Graphics2D) strategy.getDrawGraphics();
-    }
-
-
-    private void drawFullBoard(Graphics2D g) {
+    // drawing the GUI methods
+    private void drawFullBoard(Graphics g) {
         g.setColor(Color.WHITE);
         g.fillRect(0, 0, 800, 600);
         g.setColor(Color.BLACK);
         g.drawRect(width - 1, height - 1, 10 * BLOCK_SIZE + 2, 20 * BLOCK_SIZE + 2);
     }
 
-    private void drawGameOver(Graphics2D g) {
-        g.setColor(Color.BLACK);
-        g.drawString("GAME OVER", 350, 600);
+    private void drawGameOver(Graphics g) {
+        g.setColor(Color.RED);
+        g.drawString("GAME OVER", 350, 525);
     }
 
-    private void drawInstructions(Graphics2D g) {
+    private void drawInstructions(Graphics g) {
         g.setColor(Color.BLACK);
         g.drawString("Press enter to begin!", 350, 500);
         g.drawString("Use up arrow to rotate, and left and right to move the blocks!", 200, 550);
     }
 
-    private String getPlayerScore() {
-        return String.format("Score: %1s", tetris.getLinesCleared());
-    }
-
-    
-    private void drawBlocks(Graphics2D g) {
+    private void drawBlocks(Graphics g) {
         Block[][] blocks = tetris.getBlocks();
         for (int i = 0; i < 10; i++) {
             for (int j = 0; j < 20; j++) {
@@ -185,6 +167,11 @@ public class Tetris extends Canvas {
         }
     }
 
+
+
+    private String getPlayerScore() {
+        return String.format("Score: %1s", tetris.getLinesCleared());
+    }
 
 
     private Color getBlockColor(Block b) {
@@ -216,7 +203,7 @@ public class Tetris extends Canvas {
         return Color.MAGENTA;
     }
 
-    /*
+    
     public void keyPressed(KeyEvent e)
 	{
 		if (e.getKeyCode() == KeyEvent.VK_LEFT)
@@ -271,11 +258,27 @@ public class Tetris extends Canvas {
 	public void keyTyped(KeyEvent e) {
       //no code needed here
     }
-    */
+
+
+    public void run()
+    {
+        try
+        {
+            while(true)
+            {
+                Thread.currentThread().sleep(5);
+                repaint();
+            }
+        }
+        catch(Exception e)
+        {
+        }
+    }
+    
 
 
     public static void main(String[] args) {
-        new Tetris().gameLoop();
+        Tetris run = new Tetris();
     }
 
 }

@@ -21,7 +21,7 @@ public class Main {
         System.out.println("rotated points: " + blockTest.getPointsStr());
         */
         
-        Tetris.main(args);
+        Runner.main(args);
     }
 
 }
